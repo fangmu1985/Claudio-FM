@@ -9,6 +9,15 @@ const DEFAULT_LOGIN_TIMEOUT_MS = 180000;
 const DATA_DIR = path.join(__dirname, 'data', 'netease');
 const LOCAL_CONFIG_PATH = path.join(DATA_DIR, 'local.config.json');
 const QR_LOGIN_PATH = path.join(DATA_DIR, 'qr-login.html');
+const COOKIE_ATTRIBUTE_NAMES = new Set([
+  'domain',
+  'expires',
+  'httponly',
+  'max-age',
+  'path',
+  'samesite',
+  'secure',
+]);
 
 function boolEnv(name, defaultValue) {
   const value = process.env[name];
@@ -78,19 +87,36 @@ function redactSensitiveText(value) {
     .replace(/\b(cookie=)([^&\s]+)/gi, maskCookieField);
 }
 
+function normalizeCookieHeader(cookie) {
+  const values = new Map();
+  for (const chunk of String(cookie || '').split(';')) {
+    const part = chunk.trim();
+    const separator = part.indexOf('=');
+    if (!part || separator <= 0) continue;
+
+    const name = part.slice(0, separator).trim();
+    const value = part.slice(separator + 1).trim();
+    const normalizedName = name.toLowerCase();
+    if (!value || COOKIE_ATTRIBUTE_NAMES.has(normalizedName)) continue;
+    values.set(normalizedName, { name, value });
+  }
+  return [...values.values()].map(({ name, value }) => `${name}=${value}`).join('; ');
+}
+
 function hasNeteaseCookie(cookie) {
   return typeof cookie === 'string' && /MUSIC_U=|__csrf=/.test(cookie);
 }
 
 function resolveCookie() {
-  const envCookie = process.env.NETEASE_COOKIE;
+  const envCookie = normalizeCookieHeader(process.env.NETEASE_COOKIE);
   if (hasNeteaseCookie(envCookie)) {
     return { cookie: envCookie, source: 'env', path: null };
   }
 
   const localConfig = readLocalConfig();
-  if (hasNeteaseCookie(localConfig.cookie)) {
-    return { cookie: localConfig.cookie, source: 'local', path: LOCAL_CONFIG_PATH };
+  const localCookie = normalizeCookieHeader(localConfig.cookie);
+  if (hasNeteaseCookie(localCookie)) {
+    return { cookie: localCookie, source: 'local', path: LOCAL_CONFIG_PATH };
   }
 
   return { cookie: '', source: 'anonymous', path: null };
@@ -259,7 +285,7 @@ async function bootstrapNeteaseLogin({ baseUrl = neteaseBaseUrl(), required = fa
   });
 
   if (result.ok) {
-    const saved = writeLocalConfig({ cookie: result.cookie, source: 'qr-login' });
+    const saved = writeLocalConfig({ cookie: normalizeCookieHeader(result.cookie), source: 'qr-login' });
     console.log(`[netease-login] Login succeeded. Cookie saved to ${LOCAL_CONFIG_PATH}: ${maskSecret(saved.cookie)}`);
     return { ok: true, source: 'qr-login' };
   }
@@ -280,6 +306,7 @@ module.exports = {
   hasNeteaseCookie,
   maskSecret,
   neteaseBaseUrl,
+  normalizeCookieHeader,
   readJson,
   readLocalConfig,
   redactSensitiveText,
