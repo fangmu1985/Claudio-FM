@@ -196,7 +196,9 @@ async function startNeteaseIfNeeded() {
   };
 
   console.log(`[start] Starting Netease sidecar: ${command} ${finalArgs.join(' ')} (PORT=${sidecarEnv.PORT})`);
-  const sidecar = spawnChild('netease', command, finalArgs, { env: sidecarEnv });
+  const sidecarCommand = process.platform === 'win32' ? (process.env.ComSpec || 'cmd.exe') : command;
+  const sidecarArgs = process.platform === 'win32' ? ['/d', '/s', '/c', command, ...finalArgs] : finalArgs;
+  const sidecar = spawnChild('netease', sidecarCommand, sidecarArgs, { env: sidecarEnv });
 
   const startedStatus = await waitForNetease(baseUrl, timeoutMs);
   if (startedStatus.connected) {

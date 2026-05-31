@@ -34,7 +34,7 @@ function sharedContext({ includeTaste = true, includeDialog = true, recentPlayLi
 }
 
 function normalizeDjLanguage(language) {
-  return language === 'zh' ? 'zh' : 'en';
+  return language === 'en' ? 'en' : 'zh';
 }
 
 function djLanguageInstruction(language, scope = 'spoken segment text') {
@@ -114,7 +114,7 @@ function buildProgramStartPrompt(userInput, queueState = '', options = {}) {
   ].filter(Boolean).join('\n\n');
 }
 
-function buildColdOpenForTracksPrompt({ programTitle = '', tracks = [], userInput = '', djLanguage = 'en' } = {}) {
+function buildColdOpenForTracksPrompt({ programTitle = '', tracks = [], userInput = '', djLanguage = 'zh' } = {}) {
   const normalizedLanguage = normalizeDjLanguage(djLanguage);
   const trackText = tracks.length
     ? tracks.map((track, i) => `${i}. ${track.title || track.query}${track.artist ? ' — ' + track.artist : ''}`).join('\n')
@@ -166,7 +166,7 @@ function buildMusicRefillPrompt({ programTitle = '', currentTrack = null, queue 
   ].filter(Boolean).join('\n\n');
 }
 
-function buildBridgePrompt({ programTitle = '', afterTrack, beforeTrack, afterTrackIndex, beforeTrackIndex, recentLines = '', djLanguage = 'en' }) {
+function buildBridgePrompt({ programTitle = '', afterTrack, beforeTrack, afterTrackIndex, beforeTrackIndex, recentLines = '', djLanguage = 'zh' }) {
   const normalizedLanguage = normalizeDjLanguage(djLanguage);
   const afterText = `${afterTrack?.title || afterTrack?.query || 'previous track'}${afterTrack?.artist ? ' — ' + afterTrack.artist : ''}`;
   const beforeText = `${beforeTrack?.title || beforeTrack?.query || 'next track'}${beforeTrack?.artist ? ' — ' + beforeTrack.artist : ''}`;

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claudio FM — A private radio station</title>
+<title>Claudio FM — 私人 AI 电台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Doto:wght@400;600&family=Space+Grotesk:wght@300;400&display=swap" rel="stylesheet">
@@ -575,6 +575,110 @@ html, body {
 }
 [data-skin="glass"] .swatch { border-color: transparent; }
 [data-skin="glass"] .swatch.active { border-color: rgba(255,255,255,.70); }
+
+/* ── Radio console: inspired by a private late-night broadcast desk ── */
+.hero-clock {
+  position: absolute; inset: 76px 0 auto;
+  z-index: 2; display: grid; place-items: center; gap: 5px;
+  text-align: center; pointer-events: none;
+}
+.hero-time {
+  font-family: Doto, "Space Mono", monospace;
+  font-size: 76px; line-height: .96; letter-spacing: .08em;
+  color: rgba(255,255,255,.96); text-shadow: rgba(41,255,184,.14) 0 0 20px;
+}
+.hero-date {
+  font: 500 11px/1.4 "Space Grotesk", Inter, sans-serif;
+  letter-spacing: .16em; color: rgba(255,255,255,.46); text-transform: uppercase;
+}
+.hero-signal {
+  display: flex; align-items: center; gap: 7px;
+  font: 600 9px/1.4 "Space Grotesk", Inter, sans-serif;
+  letter-spacing: .18em; color: rgb(41,255,184); text-transform: uppercase;
+}
+.hero-signal::before {
+  content: ""; width: 5px; height: 5px; border-radius: 999px;
+  background: rgb(41,255,184); box-shadow: rgba(41,255,184,.65) 0 0 8px;
+}
+html:not([data-skin="glass"]) .stage {
+  background:
+    radial-gradient(ellipse at 16% 10%, rgba(19,61,106,.56), transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(74,24,92,.42), transparent 44%),
+    rgb(4,6,10);
+}
+html:not([data-skin="glass"]) .fluid { opacity: .22; filter: blur(160px); }
+html:not([data-skin="glass"]) .bg-noise { opacity: .11; }
+html:not([data-skin="glass"]) .card {
+  width: 660px; height: min(920px, calc(100vh - 32px));
+  border-radius: 18px; background: rgb(8,10,14);
+  border: 1px solid rgba(151,120,255,.28);
+  box-shadow: rgba(0,0,0,.72) 0 36px 90px -20px, rgba(79,64,137,.28) 0 0 0 1px inset;
+}
+html:not([data-skin="glass"]) .header {
+  height: 250px; border-radius: 18px 18px 0 0;
+  padding: 19px 22px 0;
+  background: linear-gradient(180deg, rgba(12,15,24,.98), rgba(5,7,11,.98));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+html:not([data-skin="glass"]) .header::before {
+  inset: 0; height: auto; opacity: .9;
+  background-image: radial-gradient(circle, rgba(255,255,255,.12) .8px, transparent .9px);
+  background-size: 13px 13px;
+  mask-image: linear-gradient(rgba(0,0,0,.95), rgba(0,0,0,.72));
+}
+html:not([data-skin="glass"]) .header-name { font-size: 30px; }
+html:not([data-skin="glass"]) .header-avatar { background: linear-gradient(135deg, #7258ca, #a968ce); }
+html:not([data-skin="glass"]) .header-status { font-family: "Space Grotesk", monospace; font-size: 11px; letter-spacing: .08em; }
+html:not([data-skin="glass"]) .header-time { color: rgba(255,255,255,.42); font: 500 12px/1 "Space Grotesk", monospace; }
+html:not([data-skin="glass"]) .wave-wrap { height: 108px; opacity: .18; }
+html:not([data-skin="glass"]) .body {
+  border-radius: 0; margin-top: 0; background: rgb(8,10,14);
+}
+html:not([data-skin="glass"]) .meta {
+  padding: 15px 20px 14px;
+  background: rgba(255,255,255,.025); border-bottom: 1px solid rgba(255,255,255,.07);
+}
+html:not([data-skin="glass"]) .session-title {
+  color: rgb(41,255,184); font-family: "Space Grotesk", monospace; font-size: 9px;
+}
+html:not([data-skin="glass"]) .meta-name { color: rgba(255,255,255,.94); font-size: 22px; font-weight: 500; }
+html:not([data-skin="glass"]) .meta-sub,
+html:not([data-skin="glass"]) .meta-source { color: rgba(255,255,255,.42); }
+html:not([data-skin="glass"]) .transcript-wrap {
+  margin: 12px 14px; border-radius: 10px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.10) .65px, transparent .75px) 0 0 / 13px 13px,
+    rgba(4,5,8,.8);
+  border: 1px solid rgba(255,255,255,.07);
+}
+html:not([data-skin="glass"]) .transcript-scroll { padding: 18px 18px 36px; }
+html:not([data-skin="glass"]) .transcript-fade { background: linear-gradient(transparent, rgba(4,5,8,.96)); }
+html:not([data-skin="glass"]) .turn {
+  padding: 11px 12px; margin-bottom: 10px;
+  background: rgba(0,0,0,.40); border-left: 2px solid rgba(41,255,184,.46);
+}
+html:not([data-skin="glass"]) .turn-head,
+html:not([data-skin="glass"]) .turn-head .who { color: rgba(255,255,255,.38); }
+html:not([data-skin="glass"]) .turn.active .turn-head,
+html:not([data-skin="glass"]) .turn.active .turn-head .who { color: rgb(41,255,184); }
+html:not([data-skin="glass"]) .turn-body,
+html:not([data-skin="glass"]) .word.said { color: rgba(255,255,255,.84); }
+html:not([data-skin="glass"]) .word.future { color: rgba(255,255,255,.24); }
+html:not([data-skin="glass"]) .player {
+  padding: 13px 17px 15px; background: rgba(255,255,255,.025);
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+html:not([data-skin="glass"]) .player-time { color: rgba(255,255,255,.52); font-family: "Space Grotesk", monospace; }
+html:not([data-skin="glass"]) .player-bar { background: rgba(255,255,255,.16); }
+html:not([data-skin="glass"]) .player-bar.played { background: rgb(41,255,184); }
+html:not([data-skin="glass"]) .play-btn { color: rgb(5,8,9); background: rgb(41,255,184); }
+html:not([data-skin="glass"]) .chat-toggle svg { color: rgb(41,255,184); }
+
+@media (max-height: 760px) {
+  .hero-time { font-size: 62px; }
+  html:not([data-skin="glass"]) .header { height: 216px; }
+  .hero-clock { inset: 70px 0 auto; }
+}
 </style>
 </head>
 <body>
@@ -597,11 +701,16 @@ html, body {
           </div>
           <div class="header-status">
             <span class="dot-live" id="dotLive" style="display:none"></span>
-            <span id="headerStatus">Paused</span>
-            <button class="replay-btn" id="replayBtn" style="display:none">↩ replay</button>
+            <span id="headerStatus">待机</span>
+            <button class="replay-btn" id="replayBtn" style="display:none">↩ 重播</button>
           </div>
         </div>
         <div class="header-time" id="headerTime">—:—</div>
+      </div>
+      <div class="hero-clock">
+        <div class="hero-time" id="heroTime">--:--</div>
+        <div class="hero-date" id="heroDate">私人电台</div>
+        <div class="hero-signal" id="heroSignal">单人频道</div>
       </div>
       <div class="wave-wrap">
         <canvas id="waveCanvas" width="1232" height="340"></canvas>
@@ -613,9 +722,9 @@ html, body {
       <!-- Meta -->
       <div class="meta">
         <div class="session-title" id="sessionTitle"></div>
-        <div class="meta-name" id="metaName">Your private<br>radio station</div>
+        <div class="meta-name" id="metaName">你的私人<br>AI 电台</div>
         <div class="meta-sub">
-          <span id="metaSub">Waiting for Claudio…</span>
+          <span id="metaSub">等待 Claudio 开播…</span>
           <span class="meta-source" id="metaSource" style="display:none">
             <svg width="11" height="11" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
               <path d="M11.2 1.8v6.9c0 1.4-1 2.4-2.3 2.4-1.2 0-2.1-.8-2.1-1.9 0-1.1 1-1.9 2.1-1.9.4 0 .8.1 1.1.3V3.9L5.9 5.2v5.1c0 1.4-1 2.4-2.3 2.4-1.2 0-2.1-.8-2.1-1.9 0-1.1 1-1.9 2.1-1.9.4 0 .8.1 1.1.3V2.6l6.5-.8z"/>
@@ -632,16 +741,13 @@ html, body {
       <div class="transcript-wrap">
         <div class="transcript-scroll" id="transcriptScroll">
           <div class="turn" id="emptyState">
-            <div class="turn-head"><span class="who">Claudio</span> · now</div>
+            <div class="turn-head"><span class="who">Claudio</span> · 现在</div>
             <div class="turn-body">
-              <span class="word future">Tell</span><span> </span>
-              <span class="word future">me</span><span> </span>
-              <span class="word future">what</span><span> </span>
-              <span class="word future">you're</span><span> </span>
-              <span class="word future">in</span><span> </span>
-              <span class="word future">the</span><span> </span>
-              <span class="word future">mood</span><span> </span>
-              <span class="word future">for.</span>
+              <span class="word future">告诉</span><span> </span>
+              <span class="word future">我，</span><span> </span>
+              <span class="word future">你现在</span><span> </span>
+              <span class="word future">想听</span><span> </span>
+              <span class="word future">什么。</span>
             </div>
           </div>
           <div style="height:20px"></div>
@@ -691,12 +797,12 @@ html, body {
     <path d="M9.6 14.1c.4-.4.9-.6 1.4-.6s1 .2 1.4.6"/>
     <path d="M11 18h.01"/>
   </svg>
-  <span class="chat-toggle-label">Request line</span>
+  <span class="chat-toggle-label">给 DJ 留言</span>
 </button>
 
 <!-- Chat bar -->
 <div class="chat-bar hidden" id="chatBar">
-  <textarea id="chat-input" rows="1" placeholder="Leave a note for Claudio…"></textarea>
+  <textarea id="chat-input" rows="1" placeholder="告诉 Claudio 你现在想听什么…"></textarea>
   <button id="chat-send" title="Patch in" aria-label="Patch in">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M5 12h13"/>
@@ -713,31 +819,31 @@ html, body {
   </svg>
 </button>
 <div class="tweaks" id="tweaks">
-  <h3>Tweaks</h3>
+  <h3>电台设置</h3>
   <div class="tweak-row">
-    <label>Skin</label>
+    <label>界面风格</label>
     <div class="segmented" id="skinControl" role="group" aria-label="Skin">
-      <button type="button" data-skin-name="default" aria-pressed="true">Cosmic</button>
-      <button type="button" data-skin-name="glass" aria-pressed="false">Glass</button>
+      <button type="button" data-skin-name="default" aria-pressed="true">电台</button>
+      <button type="button" data-skin-name="glass" aria-pressed="false">玻璃</button>
     </div>
   </div>
   <div class="tweak-row">
-    <label>DJ language</label>
+    <label>DJ 语言</label>
     <div class="segmented" id="djLanguageControl" role="group" aria-label="DJ language">
       <button type="button" data-lang="en" aria-pressed="true">English</button>
       <button type="button" data-lang="zh" aria-pressed="false">中文</button>
     </div>
   </div>
   <div class="tweak-row">
-    <label>DJ volume <span id="lblDjVolume">100%</span></label>
+    <label>DJ 音量 <span id="lblDjVolume">100%</span></label>
     <input type="range" id="inDjVolume" min="0" max="100" value="100">
   </div>
   <div class="tweak-row">
-    <label>Music volume <span id="lblMusicVolume">100%</span></label>
+    <label>音乐音量 <span id="lblMusicVolume">100%</span></label>
     <input type="range" id="inMusicVolume" min="0" max="100" value="100">
   </div>
   <div class="tweak-row">
-    <label>Header tone</label>
+    <label>顶部色调</label>
     <div class="swatches" id="swatches">
       <div class="swatch active" data-bg="linear-gradient(rgb(12,12,14) 0%, rgb(22,22,26) 100%)" style="background:rgb(12,12,14)"></div>
       <div class="swatch" data-bg="linear-gradient(rgb(11,18,32) 0%, rgb(18,28,50) 100%)" style="background:rgb(11,18,32)"></div>
@@ -745,11 +851,11 @@ html, body {
     </div>
   </div>
   <div class="tweak-row">
-    <label>Blue hue <span id="lblBlueHue">256°</span></label>
+    <label>蓝色色相 <span id="lblBlueHue">256°</span></label>
     <input type="range" id="inBlueHue" min="180" max="320" value="256">
   </div>
   <div class="tweak-row">
-    <label>Violet hue <span id="lblVioletHue">330°</span></label>
+    <label>紫色色相 <span id="lblVioletHue">330°</span></label>
     <input type="range" id="inVioletHue" min="240" max="360" value="330">
   </div>
 </div>
@@ -774,6 +880,9 @@ const scrubber   = document.getElementById('scrubber');
 const dotLive    = document.getElementById('dotLive');
 const headerStatus = document.getElementById('headerStatus');
 const headerTime   = document.getElementById('headerTime');
+const heroTime     = document.getElementById('heroTime');
+const heroDate     = document.getElementById('heroDate');
+const heroSignal   = document.getElementById('heroSignal');
 const metaName   = document.getElementById('metaName');
 const metaSub    = document.getElementById('metaSub');
 const metaSource = document.getElementById('metaSource');
@@ -790,7 +899,12 @@ const inMusicVolume = document.getElementById('inMusicVolume');
 const lblDjVolume = document.getElementById('lblDjVolume');
 const lblMusicVolume = document.getElementById('lblMusicVolume');
 const djLanguageControl = document.getElementById('djLanguageControl');
-let djLanguage = localStorage.getItem('claudio:dj-language') === 'zh' ? 'zh' : 'en';
+const DJ_LANGUAGE_DEFAULT_VERSION = 'zh-v1';
+if (localStorage.getItem('claudio:dj-language-default') !== DJ_LANGUAGE_DEFAULT_VERSION) {
+  localStorage.setItem('claudio:dj-language', 'zh');
+  localStorage.setItem('claudio:dj-language-default', DJ_LANGUAGE_DEFAULT_VERSION);
+}
+let djLanguage = localStorage.getItem('claudio:dj-language') === 'en' ? 'en' : 'zh';
 let djVolume = Number(localStorage.getItem('claudio:dj-volume') || 100) / 100;
 let baseMusicVolume = Number(localStorage.getItem('claudio:music-volume') || 100) / 100;
 let ducking = false;
@@ -802,11 +916,13 @@ const REFILL_LEAD_S = 120; // ask Claudio for more music while there is still ru
 const REFILL_LOW_WATER_TRACKS = 2;
 const MAX_BUFFER_TRACKS = 6;
 const REFILL_BACKOFF_MS = 45000;
+const MIN_EXPECTED_TRACK_PLAY_S = 30;
+const MAX_TRACK_RECOVERY_ATTEMPTS = 2;
 function buildStartMessage() {
   const now = new Date();
   const hour = now.getHours();
-  const day = now.toLocaleDateString('en-US', { weekday: 'long' });
-  return `It's ${hour}:00 on a ${day}. You're on air — open the station. Pick whatever fits the moment.`;
+  const day = now.toLocaleDateString('zh-CN', { weekday: 'long' });
+  return `现在是${day}${hour}点。这里是你的私人电台，请开播，并选择适合此刻的音乐。`;
 }
 let startingRadio = false;
 
@@ -832,6 +948,12 @@ function updateClock() {
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
   headerTime.textContent = `${h}:${m}`;
+  heroTime.textContent = `${h}:${m}`;
+  heroDate.textContent = now.toLocaleDateString('zh-CN', {
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'long',
+  }).replace(/\//g, '.');
 }
 updateClock();
 setInterval(updateClock, 10000);
@@ -1024,7 +1146,14 @@ function fmt(s) {
 
 /* ── Music player ─────────────────────────────────────────────────── */
 function setRadioStatus(status) {
-  headerStatus.textContent = status;
+  const labels = {
+    'On Air': '正在接入',
+    'Speaking': 'DJ 播报中',
+    'Playing': '正在播放',
+    'Paused': '待机',
+  };
+  headerStatus.textContent = labels[status] || status;
+  heroSignal.textContent = ['On Air', 'Speaking', 'Playing'].includes(status) ? 'ON AIR · 单人频道' : '待机 · 单人频道';
   dotLive.style.display = ['On Air', 'Speaking', 'Playing'].includes(status) ? '' : 'none';
   window._setWavePlaying(['Speaking', 'Playing'].includes(status));
 }
@@ -1038,12 +1167,16 @@ function setPlaying(v) {
 
 musicAudio.addEventListener('play',  () => setPlaying(true));
 musicAudio.addEventListener('pause', () => setPlaying(false));
-musicAudio.addEventListener('ended', () => {
+musicAudio.addEventListener('ended', async () => {
   console.info('[music] ended', {
     title: metaName.textContent,
     duration: musicAudio.duration,
     currentTime: musicAudio.currentTime,
   });
+  const playedFor = (Date.now() - playbackStartedAt) / 1000;
+  if (!trackWasManuallySeeked && playedFor < MIN_EXPECTED_TRACK_PLAY_S && await recoverCurrentTrack('ended too early')) {
+    return;
+  }
   if (!playNext()) setRadioStatus('Paused');
 });
 musicAudio.addEventListener('loadedmetadata', () => {
@@ -1054,9 +1187,10 @@ musicAudio.addEventListener('loadedmetadata', () => {
   });
   maybeRefillAhead();
 });
-musicAudio.addEventListener('error', () => {
+musicAudio.addEventListener('error', async () => {
   console.warn('[music] playback failed', musicAudio.error);
-  addTurn('Claudio', "That link dropped out. I'll skip ahead and keep the set moving.");
+  if (suppressMusicErrors || await recoverCurrentTrack('playback error')) return;
+  addTurn('Claudio', '这首歌的音频连接断开了，我先切到下一首。');
   if (!playNext()) setRadioStatus('Paused');
 });
 /* ── Prefetch next track ──────────────────────────────────────────── */
@@ -1103,6 +1237,7 @@ scrubber.addEventListener('click', e => {
   if (!musicAudio.src || !musicAudio.duration) return;
   const r = scrubber.getBoundingClientRect();
   const pct = (e.clientX - r.left) / r.width;
+  trackWasManuallySeeked = true;
   musicAudio.currentTime = pct * musicAudio.duration;
 });
 
@@ -1145,10 +1280,32 @@ function afterTtsFinished() {
 ttsAudio.addEventListener('play',  () => { setRadioStatus('Speaking'); duckMusic(); });
 ttsAudio.addEventListener('pause', () => { if (!ttsAudio.ended) restoreMusicVolume(); });
 ttsAudio.addEventListener('ended', afterTtsFinished);
-ttsAudio.addEventListener('timeupdate', () => advanceKaraoke(ttsAudio.currentTime, ttsAudio.duration || 0));
 
 /* ── Transcript ───────────────────────────────────────────────────── */
 let karaokeWords = [];
+let karaokeFrame = null;
+
+function stopKaraokeProgress() {
+  if (karaokeFrame !== null) cancelAnimationFrame(karaokeFrame);
+  karaokeFrame = null;
+}
+
+function startKaraokeProgress() {
+  stopKaraokeProgress();
+  function update() {
+    advanceKaraoke(ttsAudio.currentTime, ttsAudio.duration || 0);
+    if (!ttsAudio.paused && !ttsAudio.ended) {
+      karaokeFrame = requestAnimationFrame(update);
+    } else {
+      karaokeFrame = null;
+    }
+  }
+  karaokeFrame = requestAnimationFrame(update);
+}
+
+ttsAudio.addEventListener('play', startKaraokeProgress);
+ttsAudio.addEventListener('pause', stopKaraokeProgress);
+ttsAudio.addEventListener('ended', stopKaraokeProgress);
 
 function transcriptTokens(text) {
   return [...String(text || '').matchAll(/(\s+)|([\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}])|([^\s\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]+)/gu)]
@@ -1249,7 +1406,14 @@ function addUserTurn(text) {
 }
 
 function addCallerTurn(text) {
-  return addTurn('Caller', text, programTimeLabel());
+  return addStaticTurn('Caller', text, programTimeLabel());
+}
+
+function addStaticTurn(speaker, text, timeLabel = 'now') {
+  const count = addTurn(speaker, text, timeLabel);
+  finishKaraoke();
+  karaokeWords = [];
+  return count;
 }
 
 function playRequestLineConnect() {
@@ -1339,6 +1503,13 @@ let handledSegmentIds = new Set();
 let programClockStartedAt = null;
 let currentProgramId = null;
 let lastRefillAt = 0;
+let playbackStartedAt = 0;
+let trackRecoveryAttempts = 0;
+let activeTrackIdentity = '';
+let trackRecoveryInFlight = false;
+let trackWasManuallySeeked = false;
+let suppressMusicErrors = false;
+let speechSequenceVersion = 0;
 
 function segmentKey(segment) {
   if (!segment) return '';
@@ -1394,9 +1565,11 @@ function speakSegmentObject(segment, onEnd) {
 }
 
 function speakSegmentSequence(segments, onEnd) {
+  const version = speechSequenceVersion;
   const pending = segments.filter(segment => segment && !wasSegmentHandled(segment));
   if (pending.some(segment => segment.resetClockOnSpeak)) resetProgramClock();
   function playOne() {
+    if (version !== speechSequenceVersion) return;
     const segment = pending.shift();
     if (!segment) {
       if (onEnd) onEnd();
@@ -1405,6 +1578,15 @@ function speakSegmentSequence(segments, onEnd) {
     speakSegmentObject(segment, playOne);
   }
   playOne();
+}
+
+function interruptDjSpeech() {
+  speechSequenceVersion++;
+  ttsAudio.pause();
+  ttsAudio.removeAttribute('src');
+  ttsAudio.load();
+  finishKaraoke();
+  restoreMusicVolume();
 }
 
 function speakSegment(transcript, ttsUrl, onEnd) {
@@ -1519,9 +1701,14 @@ function autoRefill() {
     .finally(() => { autoRefilling = false; });
 }
 
-function playTrack(track) {
+function playTrack(track, options = {}) {
+  const nextIdentity = trackIdentity(track);
+  if (!options.recovery || activeTrackIdentity !== nextIdentity) trackRecoveryAttempts = 0;
+  activeTrackIdentity = nextIdentity;
+  trackWasManuallySeeked = false;
+  playbackStartedAt = Date.now();
   metaName.textContent = track.title || track.query;
-  metaSub.textContent = track.artist ? `Now Playing · ${track.artist}` : 'Now Playing';
+  metaSub.textContent = track.artist ? `正在播放 · ${track.artist}` : '正在播放';
   if (track.artist) {
     metaSourceText.textContent = track.title + ' — ' + track.artist;
     metaSource.style.display = 'inline-flex';
@@ -1531,7 +1718,47 @@ function playTrack(track) {
   }
   musicAudio.src = track.streamUrl;
   musicAudio.volume = (!ttsAudio.paused && !ttsAudio.ended) ? duckedMusicVolume() : baseMusicVolume;
+  if (options.resumeAt > 0) {
+    musicAudio.addEventListener('loadedmetadata', () => {
+      if (Number.isFinite(musicAudio.duration) && options.resumeAt < musicAudio.duration - 2) {
+        musicAudio.currentTime = options.resumeAt;
+      }
+    }, { once: true });
+  }
   musicAudio.play().catch(console.error);
+}
+
+async function recoverCurrentTrack(reason) {
+  const track = queue[queueIdx];
+  if (!track || trackRecoveryAttempts >= MAX_TRACK_RECOVERY_ATTEMPTS) return false;
+  if (trackRecoveryInFlight) return true;
+  trackRecoveryInFlight = true;
+  try {
+    while (trackRecoveryAttempts < MAX_TRACK_RECOVERY_ATTEMPTS) {
+      trackRecoveryAttempts++;
+      const resumeAt = Number.isFinite(musicAudio.currentTime) ? musicAudio.currentTime : 0;
+      console.warn(`[music] retry ${trackRecoveryAttempts}/${MAX_TRACK_RECOVERY_ATTEMPTS}: ${reason}`, track.title || track.query);
+      metaSub.textContent = `正在重新连接 · ${track.artist || track.title || ''}`;
+
+      try {
+        const res = await fetch('/api/music/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: track.query || `${track.title || ''} - ${track.artist || ''}` }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const refreshed = await res.json();
+        queue[queueIdx] = { ...track, ...refreshed };
+        playTrack(queue[queueIdx], { recovery: true, resumeAt });
+        return true;
+      } catch (err) {
+        console.warn('[music] reconnect failed', err);
+      }
+    }
+    return false;
+  } finally {
+    trackRecoveryInFlight = false;
+  }
 }
 
 function playNext() {
@@ -1589,6 +1816,27 @@ function enqueueAndPlay(tracks) {
     playTrack(queue[queueIdx]);
   }
   maybeRefillAhead();
+}
+
+function prepareQueueForNewProgram(keepCurrentTrack) {
+  const currentTrack = keepCurrentTrack ? queue[queueIdx] : null;
+
+  if (!currentTrack) {
+    suppressMusicErrors = true;
+    musicAudio.pause();
+    musicAudio.removeAttribute('src');
+    musicAudio.load();
+    prefetchedUrl = null;
+    setTimeout(() => { suppressMusicErrors = false; }, 0);
+  }
+
+  queue = currentTrack ? [currentTrack] : [];
+  queueIdx = 0;
+  segueStarted = false;
+  scriptSegments = [];
+  handledSegmentIds.clear();
+  renderQueue();
+  return queue.length;
 }
 
 function normalizeIncomingSegments(msg) {
@@ -1653,9 +1901,10 @@ function handleWsMessage(msg) {
     if (msg.stationName || msg.programName) {
       metaSub.textContent = [msg.stationName, msg.programName].filter(Boolean).join(' · ');
     }
-    resetProgramClock();
     const tracks = msg.tracks || [];
-    const incomingSegments = offsetSegmentsForQueue(normalizeIncomingSegments(msg), queue.length);
+    const queueStart = prepareQueueForNewProgram(false);
+    const incomingSegments = offsetSegmentsForQueue(normalizeIncomingSegments(msg), queueStart);
+    resetProgramClock();
     scriptSegments = [...scriptSegments, ...incomingSegments];
     if (tracks.length) enqueueAndPlay(tracks);
     const immediateSegments = findSegments(segment =>
@@ -1666,7 +1915,20 @@ function handleWsMessage(msg) {
     return;
   }
 
+  if (msg.type === 'program-unavailable') {
+    addStaticTurn('Claudio', '这次没有找到合适且可播放的新歌，我先保持当前节目。', programTimeLabel());
+    if (!musicAudio.paused && !musicAudio.ended) {
+      setRadioStatus('Playing');
+      metaSub.textContent = '保持当前节目 · 正在继续播放';
+    } else {
+      setRadioStatus('Paused');
+      metaSub.textContent = '暂未找到可播放歌曲';
+    }
+    return;
+  }
+
   if (msg.type === 'tracks-ready') {
+    if (msg.programId && currentProgramId && msg.programId !== currentProgramId) return;
     currentProgramId = msg.programId || currentProgramId;
     autoRefilling = false;
     if (msg.tracks?.length) enqueueAndPlay(msg.tracks);
@@ -1674,9 +1936,15 @@ function handleWsMessage(msg) {
   }
 
   if (msg.type === 'segment-ready') {
+    if (msg.programId && currentProgramId && msg.programId !== currentProgramId) return;
     currentProgramId = msg.programId || currentProgramId;
     const incomingSegments = normalizeIncomingSegments(msg);
     scriptSegments = [...scriptSegments, ...incomingSegments];
+    const immediateSegments = findSegments(segment =>
+      segment.position === 'immediate' ||
+      (segment.position === 'before_track' && (segment.trackIndex ?? 0) === queueIdx)
+    );
+    if (immediateSegments.length) speakSegmentSequence(immediateSegments);
     maybeStartOutroTalk();
     return;
   }
@@ -1688,7 +1956,7 @@ function handleWsMessage(msg) {
     }
     if (msg.jobType === 'program_start') {
       setRadioStatus('Paused');
-      metaSub.textContent = 'Could not start Claudio FM';
+      metaSub.textContent = 'Claudio FM 启动失败';
     }
     return;
   }
@@ -1791,7 +2059,11 @@ async function requestChat(message, { showUserTurn = true } = {}) {
 }
 
 async function patchCallerIntoStation(text) {
+  interruptDjSpeech();
   addCallerTurn(text);
+  addStaticTurn('Claudio', '收到，正在按你的想法调整节目。', programTimeLabel());
+  metaSub.textContent = 'Claudio 正在调整节目…';
+  const stationRequest = requestChat(text, { showUserTurn: false });
   let callerAudio = null;
   try {
     callerAudio = await requestCallerTts(text);
@@ -1806,7 +2078,7 @@ async function patchCallerIntoStation(text) {
     restoreMusicVolume();
     afterTtsFinished();
   }
-  await requestChat(text, { showUserTurn: false });
+  await stationRequest;
 }
 
 async function startRadio() {
@@ -1814,13 +2086,13 @@ async function startRadio() {
   startingRadio = true;
   playBtn.disabled = true;
   setRadioStatus('On Air');
-  metaSub.textContent = 'Tuning Claudio FM…';
+  metaSub.textContent = '正在接入 Claudio FM…';
   try {
     await requestChat(buildStartMessage(), { showUserTurn: false });
   } catch (err) {
     console.error('[start-radio]', err);
     setRadioStatus('Paused');
-    metaSub.textContent = 'Could not start Claudio FM';
+    metaSub.textContent = 'Claudio FM 启动失败';
   } finally {
     playBtn.disabled = false;
     startingRadio = false;
