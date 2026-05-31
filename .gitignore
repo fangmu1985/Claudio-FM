@@ -24,3 +24,6 @@ skills/netease-music/data/*
 
 # Claudio local Netease login state. May contain cookies and private QR pages.
 data/netease/*
+
+# Windows desktop launcher runtime state.
+data/windows-launcher/*

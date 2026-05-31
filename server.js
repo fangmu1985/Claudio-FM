@@ -39,9 +39,9 @@ function broadcast(payload) {
 let nowPlaying = null;
 
 const STATION_NAME = 'Claudio FM';
-const PROGRAM_NAME = 'Evening Drive';
+const PROGRAM_NAME = '私人电台';
 const REFILL_TRACK_COUNT = 3;
-const PROGRAM_START_ID_TEXT = 'This is Claudio.';
+const PROGRAM_START_ID_TEXT = '这里是 Claudio。';
 const TRACK_REPEAT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const ARTIST_RECENT_WINDOW = 5;
 
@@ -52,10 +52,11 @@ const stationState = {
   generationJobs: [],
   jobKeys: new Set(),
   workerRunning: false,
+  latestProgramRequestId: 0,
 };
 
 function normalizeDjLanguage(value) {
-  return value === 'zh' ? 'zh' : 'en';
+  return value === 'en' ? 'en' : 'zh';
 }
 
 function buildAnnouncement(result, tracks, failedTracks, speechOnly) {
@@ -415,8 +416,18 @@ function enqueueJob(job) {
     console.log(`[jobs] 跳过重复任务 ${key}`);
     return false;
   }
+  if (job.type === 'program_start' && job.source === 'user') {
+    const dropped = stationState.generationJobs.splice(0);
+    for (const pending of dropped) stationState.jobKeys.delete(pending.key);
+    if (dropped.length) console.log(`[jobs] 用户请求优先，丢弃 ${dropped.length} 个待处理后台任务`);
+  }
+  const queuedJob = { ...job, key };
+  if (job.type === 'program_start') {
+    stationState.latestProgramRequestId++;
+    queuedJob.requestId = stationState.latestProgramRequestId;
+  }
   stationState.jobKeys.add(key);
-  stationState.generationJobs.push({ ...job, key });
+  stationState.generationJobs.push(queuedJob);
   console.log(`[jobs] 入队 ${key}`);
   drainJobs();
   return true;
@@ -442,13 +453,22 @@ async function drainJobs() {
 }
 
 async function runJob(job) {
+  if (
+    ['music_refill', 'bridge_generation'].includes(job.type) &&
+    job.programId &&
+    stationState.programId &&
+    job.programId !== stationState.programId
+  ) {
+    console.log(`[jobs] 跳过过期任务 ${job.key}`);
+    return;
+  }
   if (job.type === 'program_start') return runProgramStartJob(job);
   if (job.type === 'music_refill') return runMusicRefillJob(job);
   if (job.type === 'bridge_generation') return runBridgeGenerationJob(job);
   throw new Error(`Unknown job type: ${job.type}`);
 }
 
-function enqueueBridgeJobs({ programId, sessionTitle, tracks, startIndex = 0, previousTrack = null, previousIndex = null, djLanguage = 'en' }) {
+function enqueueBridgeJobs({ programId, sessionTitle, tracks, startIndex = 0, previousTrack = null, previousIndex = null, djLanguage = 'zh' }) {
   if (previousTrack && tracks.length) {
     enqueueJob({
       type: 'bridge_generation',
@@ -483,7 +503,35 @@ async function runProgramStartJob(job) {
     djLanguage: job.djLanguage,
   });
   const result = await callClaude(prompt);
+  if (job.requestId !== stationState.latestProgramRequestId) {
+    console.log(`[jobs] 跳过已被新请求取代的节目 ${job.key}`);
+    return null;
+  }
   const { tracks, failedTracks } = await resolveRequestedTracks(result.play || []);
+  if (job.requestId !== stationState.latestProgramRequestId) {
+    console.log(`[jobs] 跳过已被新请求取代的节目 ${job.key}`);
+    return null;
+  }
+
+  stationState.programId = programId;
+  stationState.sessionTitle = result.title || '';
+  stationState.tracks = tracks;
+  if (tracks.length) nowPlaying = { title: tracks[0].title, artist: tracks[0].artist, startedAt: Date.now() };
+
+  const payload = {
+    type: 'program-start',
+    programId,
+    tracks,
+    segments: [],
+    sessionTitle: result.title || '',
+    stationName: STATION_NAME,
+    programName: PROGRAM_NAME,
+    failedTracks,
+    reason: result.reason,
+  };
+  console.log(`[jobs] 节目歌曲就绪，先推送播放 ${job.key} → ${tracks.length} 首`);
+  broadcast(payload);
+
   let coldOpenSegments = (result.segments || []).filter(segment => segment?.type === 'cold_open');
   let coldOpenReason = result.reason;
   if (tracks.length) {
@@ -494,6 +542,10 @@ async function runProgramStartJob(job) {
       djLanguage: job.djLanguage,
     });
     const coldOpenScript = await callClaude(coldOpenPrompt);
+    if (job.requestId !== stationState.latestProgramRequestId) {
+      console.log(`[jobs] 跳过已被新请求取代的节目 ${job.key}`);
+      return null;
+    }
     coldOpenSegments = Array.isArray(coldOpenScript.segments) ? coldOpenScript.segments : coldOpenSegments;
     coldOpenReason = coldOpenScript.reason || coldOpenReason;
   }
@@ -505,25 +557,20 @@ async function runProgramStartJob(job) {
     ],
   };
   const segments = await synthesizeSegments(normalizeSegments(coldOpenResult, tracks, false, failedTracks));
+  if (job.requestId !== stationState.latestProgramRequestId) {
+    console.log(`[jobs] 跳过已被新请求取代的节目 ${job.key}`);
+    return null;
+  }
 
-  stationState.programId = programId;
-  stationState.sessionTitle = result.title || '';
-  stationState.tracks = tracks;
-  if (tracks.length) nowPlaying = { title: tracks[0].title, artist: tracks[0].artist, startedAt: Date.now() };
   addMessage('claudio', segments.filter(s => s.text).map(s => s.text).join('\n\n'));
 
-  const payload = {
-    type: 'program-start',
+  console.log(`[jobs] 主播开场就绪，补充推送 ${job.key} → ${segments.length} 段`);
+  broadcast({
+    type: 'segment-ready',
     programId,
-    tracks,
     segments,
-    sessionTitle: result.title || '',
-    stationName: STATION_NAME,
-    programName: PROGRAM_NAME,
-    failedTracks,
     reason: coldOpenReason,
-  };
-  broadcast(payload);
+  });
 
   enqueueBridgeJobs({ programId, sessionTitle: result.title || '', tracks, startIndex: 0, djLanguage: job.djLanguage });
   return payload;
@@ -743,6 +790,23 @@ app.get('/api/now', (req, res) => {
 app.get('/api/next', async (req, res) => {
   broadcast({ type: 'control', action: 'next' });
   res.json({ action: 'next' });
+});
+
+app.post('/api/music/resolve', async (req, res) => {
+  const query = typeof req.body?.query === 'string' ? req.body.query.trim() : '';
+  if (!query) return res.status(400).json({ error: 'query required' });
+
+  try {
+    const track = await getTrack(query);
+    if (!track?.streamUrl) return res.status(404).json({ error: 'playable track not found' });
+    if (!trackMatchesRequest(parseRequestedTrack(query), track)) {
+      return res.status(404).json({ error: 'resolved track mismatch' });
+    }
+    res.json(track);
+  } catch (err) {
+    console.error('[music-resolve]', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/taste', (req, res) => {

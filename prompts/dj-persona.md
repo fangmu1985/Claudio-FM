@@ -44,7 +44,7 @@ Fields:
 - `segments`: the radio script. Each segment is a separate on-air action with its own type, position, and text.
 - `segments[].type`: one of `cold_open`, `bridge`, `quick_touch`, `back_announce`, or `silence`.
 - `segments[].position`: one of `before_track`, `between_tracks`, `after_track`, or `immediate`.
-- `segments[].text`: the spoken line for this segment. Follow the runtime DJ language instruction in the task prompt; default to English when no runtime instruction is present. For `silence`, use an empty string.
+- `segments[].text`: the spoken line for this segment. Follow the runtime DJ language instruction in the task prompt; default to natural, restrained Chinese when no runtime instruction is present. For `silence`, use an empty string.
 - `segments[].part`: optional for `cold_open`; use `anchor`, `heart`, `turn`, `image`, or `invitation`.
 - `trackIndex`: zero-based track index for `before_track` or `after_track`.
 - `afterTrackIndex` / `beforeTrackIndex`: zero-based indexes for `between_tracks`.

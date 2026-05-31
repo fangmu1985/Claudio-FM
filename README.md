@@ -66,7 +66,7 @@ Claudio uses DeepSeek for DJ planning and Volcengine Doubao Speech for the defau
 DEEPSEEK_API_KEY=your_deepseek_api_key
 VOLCENGINE_TTS_API_KEY=your_volcengine_tts_api_key
 VOLCENGINE_TTS_RESOURCE_ID=volc.service_type.10029
-VOLCENGINE_TTS_VOICE_TYPE=en_female_nadia_tips_emo_v2_mars_bigtts
+VOLCENGINE_TTS_VOICE_TYPE=zh_female_cancan_mars_bigtts
 ```
 
 - Get a DeepSeek API key from [DeepSeek API Keys](https://platform.deepseek.com/api_keys).
@@ -165,7 +165,7 @@ Claudio 默认使用 DeepSeek 生成 DJ 节目内容，使用火山引擎豆包�
 DEEPSEEK_API_KEY=你的_DeepSeek_API_Key
 VOLCENGINE_TTS_API_KEY=你的_火山引擎_豆包语音_API_Key
 VOLCENGINE_TTS_RESOURCE_ID=volc.service_type.10029
-VOLCENGINE_TTS_VOICE_TYPE=en_female_nadia_tips_emo_v2_mars_bigtts
+VOLCENGINE_TTS_VOICE_TYPE=zh_female_cancan_mars_bigtts
 ```
 
 - DeepSeek API Key 获取地址：[DeepSeek API Keys](https://platform.deepseek.com/api_keys)。
