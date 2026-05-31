@@ -1915,6 +1915,18 @@ function handleWsMessage(msg) {
     return;
   }
 
+  if (msg.type === 'program-unavailable') {
+    addStaticTurn('Claudio', '这次没有找到合适且可播放的新歌，我先保持当前节目。', programTimeLabel());
+    if (!musicAudio.paused && !musicAudio.ended) {
+      setRadioStatus('Playing');
+      metaSub.textContent = '保持当前节目 · 正在继续播放';
+    } else {
+      setRadioStatus('Paused');
+      metaSub.textContent = '暂未找到可播放歌曲';
+    }
+    return;
+  }
+
   if (msg.type === 'tracks-ready') {
     if (msg.programId && currentProgramId && msg.programId !== currentProgramId) return;
     currentProgramId = msg.programId || currentProgramId;

@@ -512,6 +512,17 @@ async function runProgramStartJob(job) {
     console.log(`[jobs] 跳过已被新请求取代的节目 ${job.key}`);
     return null;
   }
+  if (!tracks.length) {
+    console.warn(`[jobs] 节目没有可播放歌曲，保留当前队列 ${job.key}`);
+    const payload = {
+      type: 'program-unavailable',
+      programId: stationState.programId,
+      failedTracks,
+      reason: result.reason,
+    };
+    broadcast(payload);
+    return payload;
+  }
 
   stationState.programId = programId;
   stationState.sessionTitle = result.title || '';
